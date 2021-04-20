@@ -78,7 +78,7 @@ final class OneClickCheckoutHandler implements MessageHandlerInterface
     public function __invoke(OneClickCheckout $command): OrderInterface
     {
         /** @var ProductVariantInterface $productVariant */
-        $productVariant = $this->productVariantRepository->find($command->productVariantCode);
+        $productVariant = $this->productVariantRepository->findOneBy(['code' => $command->productVariantCode]);
 
         /** @var OrderInterface $order */
         $order = $this->orderFactory->createNew();
@@ -90,8 +90,9 @@ final class OneClickCheckoutHandler implements MessageHandlerInterface
 
         $order->addItem($orderItem);
 
+        $user = $this->userContext->getUser();
         /** @var CustomerInterface $customer */
-        $customer = $this->userContext->getUser()->getCustomer();
+        $customer = $user->getCustomer();
 
         $order->setCustomer($customer);
         $order->setShippingAddress($customer->getDefaultAddress());
@@ -101,7 +102,7 @@ final class OneClickCheckoutHandler implements MessageHandlerInterface
         $channel = $this->channelRepository->findOneByCode($command->getChannelCode());
 
         $order->setChannel($channel);
-        $order->setCurrencyCode($channel->getBaseCurrency());
+        $order->setCurrencyCode($channel->getBaseCurrency()->getCode());
         $order->setLocaleCode($command->localeCode);
 
         $orderCheckoutStateMachine = $this->stateMachineFactory->get($order, OrderCheckoutTransitions::GRAPH);

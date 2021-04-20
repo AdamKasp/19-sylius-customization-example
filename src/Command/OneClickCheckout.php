@@ -14,17 +14,22 @@ declare(strict_types=1);
 namespace App\Command;
 
 use Sylius\Bundle\ApiBundle\Command\ChannelCodeAwareInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 final class OneClickCheckout implements ChannelCodeAwareInterface
 {
-    /** @var string */
+    /** @var string
+     * @Groups("shop:order:one-click")
+     */
     public $productVariantCode;
+
+    /** @var string|null
+     * @Groups("shop:order:one-click")
+     */
+    public $localeCode;
 
     /** @var string|null */
     private $channelCode;
-
-    /** @var string|null */
-    public $localeCode;
 
     public function __construct(string $productVariantCode, ?string $localeCode)
     {

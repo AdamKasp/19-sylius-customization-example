@@ -14,12 +14,12 @@ use Sylius\Component\Core\Model\Order as BaseOrder;
  *
  * @ApiResource(
  *      routePrefix="shop",
- *      denormalizationContext={"groups"={"admin:order:read"}},
- *      itemOperations={
+ *      denormalizationContext={"groups"={"shop:order:one-click"}},
+ *      messenger="input",
+ *      collectionOperations={
  *          "oneClickCheckout"={
  *              "path"="/order/one-click-checkout",
- *              "method"="PATCH",
- *              "messanger"="input",
+ *              "method"="POST",
  *              "input"="App\Command\OneClickCheckout"
  *          }
  *       }
