@@ -39,3 +39,25 @@ services:
         class: App\Form\Extension\ProductTypeExtension
         tags:
             - { name: form.type_extension, extended_type: Sylius\Bundle\ProductBundle\Form\Type\ProductVariantType }
+
+    App\CommandHandler\OneClickCheckoutHandler:
+        public: true
+        arguments:
+            - "@sylius.api.context.user"
+            - "@sm.factory"
+            - "@sylius.factory.order"
+            - "@sylius.factory.order_item"
+            - "@sylius.order_item_quantity_modifier"
+            - "@sylius.repository.product_variant"
+            - "@doctrine.orm.entity_manager"
+            - "@sylius.repository.channel"
+        tags:
+            - {name: messenger.message_handler, bus: sylius_default.bus}
+
+    api_platform.metadata.resource.metadata_factory.annotation:
+        class: 'App\ApiPlatform\AnnotationResourceMetadataFactory'
+        decorates: 'api_platform.metadata.resource.metadata_factory'
+        decoration_priority: 40
+        arguments:
+            - "@annotation_reader"
+            - "@api_platform.metadata.resource.metadata_factory.annotation.inner"
